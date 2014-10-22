@@ -1,0 +1,5 @@
+﻿x = 4;
+if ( x == 0 )
+	show( x + 3 );
+else
+	show( x – 2 );
