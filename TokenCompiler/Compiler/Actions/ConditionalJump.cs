@@ -28,7 +28,7 @@ namespace TokenCompiler.Compiler.Actions
 
         public override string ToString()
         {
-            return "Conditional Jump \n \t TrueAction: " + trueLoc.Value.ToString() + "\n\t FalseAction: " + falseLoc.Value.ToString();
+            return "Conditional Jump \n \t\t TrueAction: " + trueLoc.Value.ToString() + "\n\t\t FalseAction: " + falseLoc.Value.ToString();
         }
     }
 }

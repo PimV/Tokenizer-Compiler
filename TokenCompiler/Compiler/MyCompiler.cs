@@ -18,13 +18,10 @@ namespace TokenCompiler.Compiler
 
         public void runCompile(List<Token> tokenList)
         {
-            if (tokenList.Count > 0)
+            List<List<Token>> parts = partitionize(tokenList);
+            foreach (List<Token> part in parts)
             {
-                List<List<Token>> parts = partitionize(tokenList);
-                foreach (List<Token> part in parts)
-                {
-                    processSubTokenList(part);
-                }
+                processSubTokenList(part);
             }
         }
 
@@ -81,10 +78,6 @@ namespace TokenCompiler.Compiler
 
         public void createIf(List<Token> subTokenList)
         {
-            //DoNothing nothingStart = new DoNothing();
-            //actions.AddLast(nothingStart);
-            //LinkedListNode<CompilerAction> nothingStartNode = actions.Last;
-
             Condition condition = new Condition(createCondition(subTokenList));
             Actions.AddLast(condition);
 
@@ -176,10 +169,12 @@ namespace TokenCompiler.Compiler
 
         public void printActionList(LinkedList<CompilerAction> actions)
         {
+            Console.WriteLine("CompilerAction list: \n");
             foreach (CompilerAction ca in actions)
             {
                 Console.WriteLine(ca.ToString());
             }
+            Console.WriteLine("");
         }
 
     }

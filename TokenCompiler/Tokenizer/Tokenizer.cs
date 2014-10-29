@@ -29,6 +29,11 @@ namespace TokenCompiler
             init();
         }
 
+        public bool isEmpty()
+        {
+            return this.TokenList.Count < 0;
+        }
+
         public void init()
         {
             lines_sample1 = System.IO.File.ReadAllLines("sample1.txt");
@@ -116,7 +121,6 @@ namespace TokenCompiler
             {
                 t.TokenType = this.Matchers_Keyword[currentToken];
             }
-
 
             handlePartners(t);
 
@@ -266,12 +270,14 @@ namespace TokenCompiler
                     break;
                 case TokenType.OpenParenth:
                     this.level++;
+                    t.Level = this.level;
                     PartnerStack.Push(t);
                     break;
                 case TokenType.CloseParenth:
                     if (PartnerStack.Count > 0 && PartnerStack.Peek() != null && PartnerStack.Peek().TokenType == TokenType.OpenParenth)
                     {
                         this.level--;
+                        t.Level = this.level;
                         t.Partner = PartnerStack.Peek();
                         PartnerStack.Pop().Partner = t;
                     }
@@ -352,6 +358,7 @@ namespace TokenCompiler
 
         public void printTokenList()
         {
+            Console.WriteLine("Tokens: \n");
             foreach (Token t in this.TokenList)
             {
                 String tokenLine = "Lvl: " + t.Level + "\tLine: " + t.LineNumber + "\tPosition: " + t.InlinePosition + "\tValue: " + t.TokenValue + "\tType: " + t.TokenType;
@@ -359,9 +366,9 @@ namespace TokenCompiler
                 {
                     tokenLine += "\tLine:Pos(partner): " + t.Partner.LineNumber + ":" + t.Partner.InlinePosition;
                 }
-
                 Console.WriteLine(tokenLine);
             }
+            Console.WriteLine("");
         }
 
         public void printErrorList()
