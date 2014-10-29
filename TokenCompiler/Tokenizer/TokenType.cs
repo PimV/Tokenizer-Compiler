@@ -17,6 +17,8 @@ namespace TokenCompiler
         //Characters
         Plus,
         Minus,
+        Multiply,
+        Divide,
         OpenParenth,
         CloseParenth,
         LBracket,

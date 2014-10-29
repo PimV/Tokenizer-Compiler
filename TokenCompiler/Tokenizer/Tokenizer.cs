@@ -13,6 +13,7 @@ namespace TokenCompiler
         public string[] lines_sample1 { get; set; }
         public string[] lines_sample2 { get; set; }
         public string[] lines_sample3 { get; set; }
+        public string[] lines_sample4 { get; set; }
         public Stack<Token> PartnerStack { get; set; }
         public List<Token> TokenList { get; set; }
         public List<Token> ErrorList { get; set; }
@@ -33,6 +34,7 @@ namespace TokenCompiler
             lines_sample1 = System.IO.File.ReadAllLines("sample1.txt");
             lines_sample2 = System.IO.File.ReadAllLines("sample2.txt");
             lines_sample3 = System.IO.File.ReadAllLines("sample3.txt");
+            lines_sample4 = System.IO.File.ReadAllLines("sample4.txt");
 
             this.PartnerStack = new Stack<Token>();
             this.TokenList = new List<Token>();
@@ -46,6 +48,8 @@ namespace TokenCompiler
             this.Matchers_Character = new Dictionary<string, TokenType>();
             this.Matchers_Character.Add(" ", TokenType.Whitespace);
             this.Matchers_Character.Add("=", TokenType.Equals);
+            this.Matchers_Character.Add("*", TokenType.Multiply);
+            this.Matchers_Character.Add("/", TokenType.Divide);
             this.Matchers_Character.Add("==", TokenType.Compare);
             this.Matchers_Character.Add("!=", TokenType.NotCompare);
             this.Matchers_Character.Add("+", TokenType.Plus);
@@ -54,13 +58,12 @@ namespace TokenCompiler
             this.Matchers_Character.Add(")", TokenType.CloseParenth);
             this.Matchers_Character.Add("{", TokenType.LBracket);
             this.Matchers_Character.Add("}", TokenType.RBracket);
-
             this.Matchers_Character.Add(";", TokenType.Semicolon);
 
             this.level = 0;
         }
 
-        public void tokenize()
+        public void createTokenList()
         {
             init();
             for (int lineNumber = 0; lineNumber < lines_sample3.Length; lineNumber++)
@@ -351,7 +354,13 @@ namespace TokenCompiler
         {
             foreach (Token t in this.TokenList)
             {
-                Console.WriteLine(t.TokenType + "[" + t.TokenValue + "]");
+                String tokenLine = "Lvl: " + t.Level + "\tLine: " + t.LineNumber + "\tPosition: " + t.InlinePosition + "\tValue: " + t.TokenValue + "\tType: " + t.TokenType;
+                if (t.Partner != null)
+                {
+                    tokenLine += "\tLine:Pos(partner): " + t.Partner.LineNumber + ":" + t.Partner.InlinePosition;
+                }
+
+                Console.WriteLine(tokenLine);
             }
         }
 
