@@ -23,40 +23,40 @@ namespace TokenCompiler.Compiler
                 List<List<Token>> parts = partitionize(tokenList);
                 foreach (List<Token> part in parts)
                 {
-                    handlePart(part);
+                    processSubTokenList(part);
                 }
             }
         }
 
-        public void handlePart(List<Token> part)
+        public void processSubTokenList(List<Token> subTokenList)
         {
-            switch (part[0].TokenType)
+            switch (subTokenList[0].TokenType)
             {
                 case TokenType.Identifier:
-                    createAssignment(part);
+                    createAssignment(subTokenList);
                     break;
                 case TokenType.While:
-                    createWhile(part);
+                    createWhile(subTokenList);
                     break;
                 case TokenType.If:
-                    createIf(part);
+                    createIf(subTokenList);
                     break;
             }
         }
 
-        public void createAssignment(List<Token> parts)
+        public void createAssignment(List<Token> subTokenList)
         {
-            parts.RemoveAt(parts.Count - 1);
-            Actions.AddLast(new Assignment(parts));
+            subTokenList.RemoveAt(subTokenList.Count - 1);
+            Actions.AddLast(new Assignment(subTokenList));
         }
 
-        public void createWhile(List<Token> parts)
+        public void createWhile(List<Token> subTokenList)
         {
             DoNothing nothingStart = new DoNothing();
             Actions.AddLast(nothingStart);
             LinkedListNode<CompilerAction> nothingStartNode = Actions.Last;
 
-            Condition condition = new Condition(createCondition(parts));
+            Condition condition = new Condition(createCondition(subTokenList));
             Actions.AddLast(condition);
 
             ConditionalJump condJump = new ConditionalJump();
@@ -66,10 +66,10 @@ namespace TokenCompiler.Compiler
             Actions.AddLast(nothingTrue);
             condJump.trueLoc = Actions.Last;
 
-            List<List<Token>> body = processBody(parts);
+            List<List<Token>> body = processBody(subTokenList);
             foreach (List<Token> bodyPart in body)
             {
-                handlePart(bodyPart);
+                processSubTokenList(bodyPart);
             }
             Actions.AddLast(new Jump(nothingStartNode));
 
@@ -79,13 +79,13 @@ namespace TokenCompiler.Compiler
 
         }
 
-        public void createIf(List<Token> parts)
+        public void createIf(List<Token> subTokenList)
         {
             //DoNothing nothingStart = new DoNothing();
             //actions.AddLast(nothingStart);
             //LinkedListNode<CompilerAction> nothingStartNode = actions.Last;
 
-            Condition condition = new Condition(createCondition(parts));
+            Condition condition = new Condition(createCondition(subTokenList));
             Actions.AddLast(condition);
 
             ConditionalJump condJump = new ConditionalJump();
@@ -95,10 +95,10 @@ namespace TokenCompiler.Compiler
             Actions.AddLast(nothingTrue);
             condJump.trueLoc = Actions.Last;
 
-            List<List<Token>> body = processBody(parts);
+            List<List<Token>> body = processBody(subTokenList);
             foreach (List<Token> bodyPart in body)
             {
-                handlePart(bodyPart);
+                processSubTokenList(bodyPart);
             }
 
             DoNothing nothingFalse = new DoNothing();
@@ -106,12 +106,12 @@ namespace TokenCompiler.Compiler
             condJump.falseLoc = Actions.Last;
         }
 
-        public List<Token> createCondition(List<Token> parts)
+        public List<Token> createCondition(List<Token> subTokenList)
         {
             List<Token> returnValue = new List<Token>();
             bool condition = false;
 
-            foreach (Token t in parts)
+            foreach (Token t in subTokenList)
             {
                 switch (t.TokenType)
                 {
@@ -129,12 +129,12 @@ namespace TokenCompiler.Compiler
             return returnValue;
         }
 
-        public List<List<Token>> processBody(List<Token> parts)
+        public List<List<Token>> processBody(List<Token> subTokenList)
         {
             List<Token> bodyParts = new List<Token>();
             bool open = false;
 
-            foreach (Token t in parts)
+            foreach (Token t in subTokenList)
             {
                 if (t.TokenType == TokenType.LBracket)
                 {
@@ -157,20 +157,20 @@ namespace TokenCompiler.Compiler
 
         public List<List<Token>> partitionize(List<Token> tokenList)
         {
-            List<List<Token>> parts = new List<List<Token>>();
+            List<List<Token>> subTokenListList = new List<List<Token>>();
 
-            List<Token> part = new List<Token>();
+            List<Token> subTokenList = new List<Token>();
 
             foreach (Token t in tokenList)
             {
-                part.Add(t);
-                if ((t.TokenType == TokenType.RBracket) || (t.TokenType == TokenType.Semicolon && t.Level == part[0].Level))
+                subTokenList.Add(t);
+                if ((t.TokenType == TokenType.RBracket) || (t.TokenType == TokenType.Semicolon && t.Level == subTokenList[0].Level))
                 {
-                    parts.Add(part);
-                    part = new List<Token>();
+                    subTokenListList.Add(subTokenList);
+                    subTokenList = new List<Token>();
                 }
             }
-            return parts;
+            return subTokenListList;
         }
 
 
