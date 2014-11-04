@@ -30,7 +30,7 @@ namespace TokenCompiler.Compiler.Actions
                 case TokenType.NotCompare:
                     return LValue != RValue;
                 default:
-                    throw new ArgumentException("Not in compiler");
+                    throw new ArgumentException("Not supported in our compiler");
             }
         }
 
